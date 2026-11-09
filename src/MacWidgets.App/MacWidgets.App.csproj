@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <UseWindowsForms>true</UseWindowsForms>
+    <EnableWindowsTargeting>true</EnableWindowsTargeting>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <ApplicationIcon>Assets\app.ico</ApplicationIcon>
+    <AssemblyName>MacWidgets</AssemblyName>
+    <RootNamespace>MacWidgets</RootNamespace>
+    <Product>MacWidgets 桌面小组件</Product>
+    <AssemblyTitle>MacWidgets 桌面小组件</AssemblyTitle>
+    <SatelliteResourceLanguages>zh-Hans;en</SatelliteResourceLanguages>
+    <!-- WPF0001: ThemeMode(Fluent) 为实验 API；WFO0003: 本项目以 WPF 为主，DPI 由 app.manifest 声明（WinForms 仅用于托盘图标） -->
+    <NoWarn>$(NoWarn);WPF0001;CA1416;WFO0003</NoWarn>
+    <InvariantGlobalization>false</InvariantGlobalization>
+  </PropertyGroup>
+  <ItemGroup>
+    <!-- 同时启用 WPF 与 WinForms（托盘图标）时避免类型名冲突 -->
+    <Using Remove="System.Windows.Forms" />
+    <Using Remove="System.Drawing" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Assets\app.ico" LogicalName="MacWidgets.app.ico" />
+    <EmbeddedResource Include="Assets\photos-logo.png" LogicalName="MacWidgets.photos-logo.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\MacWidgets.Core\MacWidgets.Core.csproj" />
+  </ItemGroup>
+</Project>

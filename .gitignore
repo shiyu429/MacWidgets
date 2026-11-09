@@ -1,0 +1,32 @@
+# Build
+bin/
+obj/
+TestResults/
+publish/
+publish-folder/
+
+# IDE / OS
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+.DS_Store
+Thumbs.db
+*~
+
+# Logs / local runtime
+*.log
+
+# Published binaries & installers — attach to GitHub Releases, do not commit
+dist/
+tools/*.exe
+tools/*.zip
+*.exe
+*.zip
+
+# Keep scripts/assets under build/ and source tree; do not ignore images/icons
+!src/**/*.png
+!src/**/*.ico
+!tools/ref/**
+!build/**

@@ -15,7 +15,7 @@
 
 </div>
 
-> ⚠️ 本项目在 Linux 上交叉编译完成，**尚未在真实 Windows 上运行测试**。见文末「已知限制与风险」。
+> ⚠️ 本项目在 Linux 上交叉编译完成，**尚未在真实 Windows 上运行测试**。
 
 ---
 
@@ -122,32 +122,6 @@ dotnet publish src/MacWidgets.App/MacWidgets.App.csproj -c Release -r win-x64 --
 ├─ build/                       # publish.sh / publish.ps1 / installer.nsi
 └─ tools/ref/reference.png      # 布局参考图
 ```
-
----
-
-## 与方案 A 的差异（已确认的调整）
-
-1. **打包**：未使用 Velopack；改为自包含单文件 exe + zip + NSIS 安装包（按用户安装，无需管理员）。没有自动更新。
-2. **持久化**：只用 JSON（不使用 SQLite），图片复制进数据目录；路径为 `%AppData%`。
-3. **Win32 互操作**：手写 `DllImport`，未使用 CsWin32。
-4. **依赖精简**：未使用 CommunityToolkit.Mvvm、WPF-UI、H.NotifyIcon、Polly、Serilog、Microsoft.Extensions.*；界面用代码构建（无 XAML），托盘用 WinForms `NotifyIcon`。运行时无任何第三方 NuGet 包。
-5. **定位**：未接入 `Windows.Devices.Geolocation`，只用 IP 定位 + 手动城市；不接和风天气。
-6. **字体**：不内置字体；中文 `PingFang SC` → `Segoe UI` → `Microsoft YaHei UI`；时钟数字优先 `Impact`。
-7. **未做**：拖放弹性动画、照片多图轮播、股票代码联想搜索、Toast（用托盘气泡代替）、深色模式、全屏应用检测时暂停动画。
-
----
-
-## 已知限制与风险（均未在 Windows 上实测）
-
-- **桌面层 Z 序**：置底 + 前台钩子在 Win+D / Win+M / 任务视图 / 多桌面 / 全屏游戏下的行为需要实测
-- **嵌入桌面模式**为实验功能：WPF 透明窗口作为 `WorkerW/Progman` 子窗口在 Win11 24H2+ 上可能不显示或无法点击，默认关闭
-- **不抢焦点与输入**：`WS_EX_NOACTIVATE` 窗口需要打字时临时可激活；中文输入法候选框、右键菜单关闭行为需实测
-- **多显示器 / 混合 DPI**：跨不同缩放比例屏幕拖动时可能有一两帧跳动
-- **Fluent 主题**（`Window.ThemeMode`）为 .NET 实验 API，Win10 上异常会退回经典样式
-- **透明分层窗口性能**：时钟 30fps 重绘，预计 CPU 占用很低但未测量
-- **数据源**：均为非官方公开接口，可能变更或限流
-- **照片**：未处理 EXIF 方向；HEIC 依赖系统 HEIF 扩展
-- 单元测试只覆盖 Core；**WPF 界面代码只保证编译通过**，视觉 1:1 程度需在 Windows 上对照参考图微调
 
 ---
 

@@ -180,10 +180,14 @@ public sealed class WidgetHost
         return w;
     }
 
+    private static readonly WidgetKind[] FirstRunKinds = [WidgetKind.Clock, WidgetKind.Weather];
+
     private void CreateDefaultLayout()
     {
         var mon = Monitors.Primary();
-        foreach (var k in Catalog.Kinds)
+        // 1.0.25：全新安装首次启动只放时钟和天气；其余组件到组件库按需添加。
+        // 仅在布局未初始化（没有已保存布局）时执行，老用户的布局不受影响。
+        foreach (var k in FirstRunKinds)
         {
             var inst = NewInstance(k);
             var (x, y) = Catalog.ReferenceSlot(k);

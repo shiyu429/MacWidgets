@@ -14,6 +14,7 @@ public sealed class PlanView : WidgetView
     private readonly TextBlock _count;
     private readonly StackPanel _list = new();
     private readonly TextBlock _more;
+    private readonly TextBlock _empty;
     private readonly Border _plus;
 
     public PlanView(WidgetInstance inst, bool preview) : base(inst, preview)
@@ -61,6 +62,14 @@ public sealed class PlanView : WidgetView
         right.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
         right.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
         right.Children.Add(_list);
+        // 1.0.25：空状态文字在右侧区域内水平、垂直居中
+        _empty = UiKit.T("没有已安排的提醒", 12, FontWeights.Normal, UiKit.Secondary);
+        _empty.HorizontalAlignment = HorizontalAlignment.Center;
+        _empty.VerticalAlignment = VerticalAlignment.Center;
+        _empty.TextAlignment = TextAlignment.Center;
+        _empty.Visibility = Visibility.Collapsed;
+        Grid.SetRowSpan(_empty, 2);
+        right.Children.Add(_empty);
         var foot = new Grid();
         _more = UiKit.T("", 11, FontWeights.SemiBold, UiKit.Secondary);
         _more.Margin = new Thickness(29, 0, 0, 0);
@@ -118,11 +127,6 @@ public sealed class PlanView : WidgetView
             shown++;
         }
         _more.Text = items.Count > shown ? $"+{items.Count - shown} 项" : "";
-        if (items.Count == 0)
-        {
-            var empty = UiKit.T("没有已安排的提醒", 12, FontWeights.Normal, UiKit.Secondary);
-            empty.Margin = new Thickness(0, 8, 0, 0);
-            _list.Children.Add(empty);
-        }
+        _empty.Visibility = items.Count == 0 ? Visibility.Visible : Visibility.Collapsed;
     }
 }

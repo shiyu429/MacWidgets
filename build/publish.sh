@@ -4,7 +4,7 @@ set -euo pipefail
 export DOTNET_ROOT="${DOTNET_ROOT:-$HOME/.dotnet}"
 export PATH="$DOTNET_ROOT:$PATH"
 cd "$(dirname "$0")/.."
-VERSION="${VERSION:-1.0.24}"
+VERSION="${VERSION:-1.0.25}"
 DIST="$(cd .. && pwd)/dist"
 rm -rf "$DIST"
 mkdir -p "$DIST"

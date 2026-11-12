@@ -199,7 +199,7 @@ public sealed class WidgetHost
         // 示例提醒（与参考图一致）
         if (Store.Reminders.Items.Count == 0)
         {
-            var hello = ReminderStore.Add("你好", DateTime.Today.AddHours(23), true);
+            var hello = ReminderStore.Add("你好", DateTime.Today, false);
             // 1.0.24：只给「今天」组件预置；「计划」等待办组件新添加时保持空列表
             hello.IsSample = true;
             ReminderStore.Commit();

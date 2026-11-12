@@ -30,7 +30,7 @@ public static class ReminderRows
         Grid.SetColumn(title, 1);
         row.Children.Add(title);
 
-        if (showTimeText)
+        if (showTimeText && !ReminderStore.IsSeedSample(r))
         {
             var t = UiKit.T(ReminderStore.FormatDue(r), 13, FontWeights.Normal, UiKit.Secondary);
             t.VerticalAlignment = VerticalAlignment.Center;
@@ -39,7 +39,7 @@ public static class ReminderRows
             Grid.SetColumn(t, 2);
             row.Children.Add(t);
         }
-        else if (r.HasTime)
+        else if (r.HasTime && !ReminderStore.IsSeedSample(r))
         {
             var icon = new Shapes.Path { Data = Icons.ClockSmall, Stroke = UiKit.Secondary, StrokeThickness = 1.1, Width = 12, Height = 12, Stretch = Stretch.Uniform, VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(8, 0, 0, 0), ToolTip = ReminderStore.FormatDue(r) };
             Grid.SetColumn(icon, 2);

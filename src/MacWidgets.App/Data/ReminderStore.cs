@@ -78,7 +78,7 @@ public static class ReminderStore
         if (r.Due is not { } d) return "";
         var today = DateTime.Today;
         string day = d.Date == today ? "" : d.Date == today.AddDays(1) ? "明天" : d.Date < today ? "已过期" : $"{d.Month}月{d.Day}日";
-        if (!r.HasTime) return day == "" ? "今天" : day;
+        if (!r.HasTime || IsSeedSample(r)) return day == "" ? "今天" : day;
         return day == "" ? d.ToString("HH:mm") : $"{day} {d:HH:mm}";
     }
 }

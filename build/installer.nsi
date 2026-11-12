@@ -4,7 +4,7 @@ Unicode true
 !include "MUI2.nsh"
 
 !ifndef VERSION
-  !define VERSION "1.0.25"
+  !define VERSION "1.0.26"
 !endif
 !ifndef SRCDIR
   !define SRCDIR "..\..\dist\publish"

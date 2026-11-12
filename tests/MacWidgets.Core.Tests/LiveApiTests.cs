@@ -26,6 +26,20 @@ public class LiveApiTests
     }
 
     [Fact]
+    public async Task PreviousSessionIntraday()
+    {
+        if (!Live) return;
+        foreach (var s in new[] { "usAAPL", "us.IXIC", "sh000001", "hkHSI" })
+        {
+            var days = await QuoteClient.TencentRecentSessionsAsync(s);
+            Assert.True(days.Count >= 2, s);
+            // 除当日外，至少有一个更早的完整交易日
+            Assert.Contains(days.Skip(1), d => d.Points.Length > 100);
+            Assert.NotNull(IntradaySessions.LatestNonEmpty(days));
+        }
+    }
+
+    [Fact]
     public async Task Weather()
     {
         if (!Live) return;

@@ -1,7 +1,7 @@
 # Windows 上构建发布（PowerShell）：.\build\publish.ps1
 $ErrorActionPreference = "Stop"
 Set-Location (Join-Path $PSScriptRoot "..")
-$Version = if ($env:VERSION) { $env:VERSION } else { "1.0.23" }
+$Version = if ($env:VERSION) { $env:VERSION } else { "1.0.24" }
 $Dist = Join-Path (Resolve-Path "..") "dist"
 if (Test-Path $Dist) { Remove-Item $Dist -Recurse -Force }
 New-Item -ItemType Directory $Dist | Out-Null

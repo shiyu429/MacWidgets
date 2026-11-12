@@ -117,6 +117,42 @@ public static partial class Parsers
         return pts.ToArray();
     }
 
+    /// <summary>腾讯近 5 日分时（A 股/港股 day、美股 dayus）：data.{sym}.data = [{date, prec, data:["HHMM 价格 量 ...", ...]}, ...]，新到旧。</summary>
+    public static List<IntradaySession> ParseTencentDays(string json, string sym)
+    {
+        var list = new List<IntradaySession>();
+        using var doc = JsonDocument.Parse(json);
+        if (!doc.RootElement.TryGetProperty("data", out var data) || data.ValueKind != JsonValueKind.Object) return list;
+        JsonElement node = default;
+        bool found = false;
+        foreach (var p in data.EnumerateObject())
+        {
+            if (string.Equals(p.Name, sym, StringComparison.OrdinalIgnoreCase)) { node = p.Value; found = true; break; }
+        }
+        if (!found && data.EnumerateObject().Any()) { node = data.EnumerateObject().First().Value; found = true; }
+        if (!found || node.ValueKind != JsonValueKind.Object) return list;
+        if (!node.TryGetProperty("data", out var days) || days.ValueKind != JsonValueKind.Array) return list;
+        foreach (var day in days.EnumerateArray())
+        {
+            if (day.ValueKind != JsonValueKind.Object) continue;
+            var pts = new List<double>();
+            if (day.TryGetProperty("data", out var arr) && arr.ValueKind == JsonValueKind.Array)
+            {
+                foreach (var e in arr.EnumerateArray())
+                {
+                    var s = e.ValueKind == JsonValueKind.String ? e.GetString() : null;
+                    if (s is null) continue;
+                    var parts = s.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+                    if (parts.Length < 2) continue;
+                    var v = D(parts[1]);
+                    if (!double.IsNaN(v) && v > 0) pts.Add(v);
+                }
+            }
+            list.Add(new IntradaySession(Str(day, "date"), Num(day, "prec"), pts.ToArray()));
+        }
+        return list;
+    }
+
     /// <summary>东方财富 trends2：data.preClose，data.trends = ["时间,开,收,高,低,...", ...]。</summary>
     public static (double PrevClose, double[] Points) ParseEastmoneyTrends(string json)
     {

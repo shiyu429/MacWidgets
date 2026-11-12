@@ -20,9 +20,17 @@ public static class ReminderStore
     public static IReadOnlyList<ReminderItem> Scheduled()
     {
         var today = DateTime.Today;
-        return Items.Where(r => !r.Completed && r.Due is { } d && d.Date >= today)
+        return Items.Where(r => !r.Completed && !IsSeedSample(r) && r.Due is { } d && d.Date >= today)
             .OrderBy(r => r.Due!.Value.Date).ThenBy(r => r.HasTime ? r.Due!.Value.TimeOfDay : TimeSpan.MaxValue).ToList();
     }
+
+    /// <summary>
+    /// 预置示例「你好」（仅属于「今天」组件）。1.0.23 及以前生成的示例没有 IsSample 标记，
+    /// 按其固定特征识别：标题「你好」、当天 23:00、带时间、且创建于同一天。
+    /// </summary>
+    public static bool IsSeedSample(ReminderItem r) =>
+        r.IsSample ||
+        (r.Title == "你好" && r.HasTime && r.Due is { } d && d.TimeOfDay == TimeSpan.FromHours(23) && d.Date == r.CreatedAt.Date);
 
     public static ReminderItem? Find(string id) => Items.FirstOrDefault(r => r.Id == id);
 

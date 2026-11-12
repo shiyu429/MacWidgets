@@ -108,7 +108,16 @@ public sealed class QuoteClient
         return [];
     }
 
-    /// <summary>当日分时：腾讯（A 股 minute / 港股 hkMinute / 美股 minute）→ 东方财富 trends2。</summary>
+    /// <summary>腾讯近 5 个交易日分时（A 股/港股 day，美股 dayus），新到旧。</summary>
+    public static async Task<List<IntradaySession>> TencentRecentSessionsAsync(string sym, CancellationToken ct = default)
+    {
+        var path = Symbols.MarketOf(sym) == Market.US ? "dayus" : "day";
+        var url = $"https://web.ifzq.gtimg.cn/appstock/app/{path}/query?code={sym}";
+        var json = await Http.GetStringAsync(url, ct: ct).ConfigureAwait(false);
+        return Parsers.ParseTencentDays(json, sym);
+    }
+
+    /// <summary>当日分时：腾讯（A 股 minute / 港股 hkMinute / 美股 minute）→ 腾讯近 5 日（取最近非空交易日）→ 东方财富 trends2。</summary>
     public async Task<Intraday?> GetIntradayAsync(string sym, double prevCloseHint, CancellationToken ct = default)
     {
         int expected = Symbols.ExpectedPoints(sym);
@@ -118,7 +127,19 @@ public sealed class QuoteClient
             var url = $"https://web.ifzq.gtimg.cn/appstock/app/{path}/query?code={sym}";
             var json = await Http.GetStringAsync(url, ct: ct).ConfigureAwait(false);
             var pts = Parsers.ParseTencentMinute(json, sym);
-            if (pts.Length > 1) return new Intraday(sym, prevCloseHint, pts, Math.Max(expected, pts.Length), "腾讯");
+            if (IntradaySessions.HasData(pts)) return new Intraday(sym, prevCloseHint, pts, Math.Max(expected, pts.Length), "腾讯");
+        }
+        catch (Exception ex) when (ex is not OperationCanceledException || !ct.IsCancellationRequested) { }
+
+        // 1.0.24：当日未开盘/休市时当日分时为空，改取近 5 日分时中最近一个有数据的交易日
+        try
+        {
+            var s = IntradaySessions.LatestNonEmpty(await TencentRecentSessionsAsync(sym, ct).ConfigureAwait(false));
+            if (s != null)
+            {
+                double prev = double.IsNaN(s.PrevClose) || s.PrevClose <= 0 ? prevCloseHint : s.PrevClose;
+                return new Intraday(sym, prev, s.Points, Math.Max(expected, s.Points.Length), "腾讯");
+            }
         }
         catch (Exception ex) when (ex is not OperationCanceledException || !ct.IsCancellationRequested) { }
 

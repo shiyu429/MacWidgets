@@ -138,14 +138,16 @@ public sealed class PopupMenu : Window
         {
             var check = new System.Windows.Shapes.Path
             {
-                Data = Geometry.Parse("M 0,5 L 3.5,8.5 L 10,1.5"),
+                // 1.0.24：几何整体内移 1.5px 并放大容器（10×8 → 14×12），避免圆头笔触在左/下/右侧被裁掉
+                Data = Geometry.Parse("M 1.5,6 L 5,9.5 L 11.5,2.5"),
                 Stroke = LabelBrush,
                 StrokeThickness = 1.6,
                 StrokeLineJoin = PenLineJoin.Round,
                 StrokeStartLineCap = PenLineCap.Round,
                 StrokeEndLineCap = PenLineCap.Round,
-                Width = 10,
-                Height = 8,
+                Width = 14,
+                Height = 12,
+                ClipToBounds = false,
                 Stretch = Stretch.None,
                 HorizontalAlignment = HorizontalAlignment.Left,
                 VerticalAlignment = VerticalAlignment.Center,

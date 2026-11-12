@@ -137,7 +137,7 @@ public sealed class EditWidgetDialog : Window
                 list.Items.Clear();
                 foreach (var p in res) list.Items.Add(new ListBoxItem { Content = p.Display, Tag = p });
                 list.Visibility = res.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
-                status.Text = res.Count > 0 ? "选择一个结果：" : "没有找到，换个写法试试（如“株洲”“Zhuzhou”）";
+                status.Text = res.Count > 0 ? "选择一个结果：" : "没有找到，换个写法试试（如“北京”“Beijing”）";
             }
             catch (Exception ex) { status.Text = "搜索失败：" + ex.Message; }
         }

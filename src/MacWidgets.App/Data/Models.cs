@@ -92,6 +92,8 @@ public sealed class ReminderItem
     public bool Completed { get; set; }
     public DateTime? CompletedAt { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.Now;
+    /// <summary>1.0.24：首次启动预置的示例提醒（「今天」里的「你好」），只在「今天」组件显示，不进「计划」等待办组件。</summary>
+    public bool IsSample { get; set; }
 }
 
 public sealed class RemindersFile

@@ -296,13 +296,13 @@ public sealed class ClockFace : FrameworkElement
     private Geometry BuildText(string text, Size size)
     {
         double ppd = VisualTreeHelper.GetDpi(this).PixelsPerDip;
-        var tf = new Typeface(UiKit.Clock, FontStyles.Normal, FontWeights.Bold, FontStretches.Condensed);
+        var tf = new Typeface(UiKit.Clock, FontStyles.Normal, FontWeights.Medium, FontStretches.Condensed);
         FormattedText Make(string s) => new(s, CultureInfo.InvariantCulture, FlowDirection.LeftToRight, tf, 100, Brushes.Black, ppd);
 
-        // 以 "00:00" 的墨迹边界确定缩放：数字高 ≈ 35% 组件高，整体宽 ≈ 72% 组件宽（原先 37% / 77%）
+        // 以 "00:00" 的墨迹边界确定缩放：数字高 ≈ 37% 组件高，整体宽 ≈ 76% 组件宽
         var refGeo = Make("00:00").BuildGeometry(new Point(0, 0));
         var rb = refGeo.Bounds;
-        double targetW = size.Width * 0.72, targetH = size.Height * 0.35;
+        double targetW = size.Width * 0.77, targetH = size.Height * 0.37;
         double sx = rb.Width > 0 ? targetW / rb.Width : 1;
         double sy = rb.Height > 0 ? targetH / rb.Height : 1;
 
